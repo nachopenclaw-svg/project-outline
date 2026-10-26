@@ -280,6 +280,9 @@ export const register: Register = on => {
           const done = isDone(area)
           const fold = at(area.name)
           const isOpen = opened[fold] ?? !done
+          // Folding hides only finished jobs; what's still to do stays in view.
+          const shown = isOpen ? area.items : area.items.filter(item => item.mark !== '✓')
+          const hidden = area.items.length - shown.length
 
           return (
             <Box flexDirection="column">
@@ -291,11 +294,11 @@ export const register: Register = on => {
                   onPress={() => update($, folds, all => ({ ...all, [fold]: !isOpen }))}
                 />
                 {done && <Text color="success">✓</Text>}
-                {!isOpen && <Text dimColor>({area.items.length})</Text>}
+                {hidden > 0 && <Text dimColor>({hidden} done)</Text>}
               </Box>
-              {isOpen && (
+              {shown.length > 0 && (
                 <Box flexDirection="column">
-                {area.items.map(item => {
+                {shown.map(item => {
                   const raw = block(file, item.line)
                   const asking = at(String(item.line))
 

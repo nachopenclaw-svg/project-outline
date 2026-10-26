@@ -162,6 +162,14 @@ test('the panel draws the outline; presses check off, fold and delete', async ($
   await ui.press({ key: 'area:3:Accounts' })
   expect(await ui.find({ type: 'Text', text: /Sign-in with email/ })).toBeUndefined()
 
+  // Folding an area with work left hides only its finished jobs.
+  await ui.press({ key: 'area:6:Search' })
+  expect(await ui.find({ type: 'Text', text: /Search by name/ })).toBeUndefined()
+  expect(await ui.find({ type: 'Text', text: /Filter by ingredient/ })).toBeDefined()
+  expect(await ui.find({ type: 'Text', text: /\(1 done\)/ })).toBeDefined()
+  await ui.press({ key: 'area:6:Search' })
+  expect(await ui.find({ type: 'Text', text: /Search by name/ })).toBeDefined()
+
   // "No" keeps the job; "Yes" deletes exactly that line.
   await ui.press({ key: 'del:8' })
   await ui.press({ key: 'no:8' })

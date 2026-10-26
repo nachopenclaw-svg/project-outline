@@ -1,0 +1,5 @@
+{
+  "name": "project-outline",
+  "owner": { "name": "nachopenclaw-svg" },
+  "plugins": [{ "name": "project-outline", "source": "./" }]
+}

@@ -40,7 +40,8 @@ const trim = (path: string) => path.replace(/[\\/]+$/, '')
 const projectPath = async ($: EngineInterface) => `${trim(await $.session.cwd())}/docs/outline.md`
 
 // A chat's outline lives in the project (docs/chat-outlines/) when the folder
-// has a project outline, else in ~/.claude/chat-outlines/. Once its file
+// has a project outline, else in ~/chat-outlines/ (not under ~/.claude, where
+// Claude Code blocks the model's writes). Once its file
 // exists it stays where it is, so a project outline made mid-chat moves nothing.
 async function chatPath($: EngineInterface): Promise<string> {
   const cwd = trim(await $.session.cwd())
@@ -49,7 +50,7 @@ async function chatPath($: EngineInterface): Promise<string> {
   // No home folder: no chat outline, rather than a guessed place for it.
   if (!home) throw new Error('no home folder')
   const inProject = `${cwd}/docs/chat-outlines/${id}.md`
-  const outside = `${trim(home)}/.claude/chat-outlines/${id}.md`
+  const outside = `${trim(home)}/chat-outlines/${id}.md`
   if (await $.fs.exists(inProject)) return inProject
   if (await $.fs.exists(outside)) return outside
   return (await $.fs.exists(`${cwd}/docs/outline.md`)) ? inProject : outside

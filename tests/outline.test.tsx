@@ -104,7 +104,7 @@ test('the rules reach the system prompt, but not a teammate', async ($, on) => {
   ])
   expect(main.sections[1]!.text).toContain('docs/outline.md')
   // No project outline here, so the chat outline goes in ~/.claude.
-  expect(main.sections[2]!.text).toContain('C:\\Users\\k/.claude/chat-outlines/chat-1.md')
+  expect(main.sections[2]!.text).toContain('C:\\Users\\k/chat-outlines/chat-1.md')
 
   const teammate = await $.prompt.compose({ ...COMPOSE, traits: ['teammate'] })
   expect(teammate.sections.map(s => s.id)).toEqual(['intro'])
@@ -304,8 +304,8 @@ test('the chat outline: where it is saved, its tab, and edits to its own file', 
   files['C:/dev/recipes/docs/outline.md'] = FILE
   expect(await compose()).toContain('C:\\dev\\recipes/docs/chat-outlines/chat-1.md')
   // A chat outline already kept outside stays there.
-  files['C:/Users/k/.claude/chat-outlines/chat-1.md'] = CHAT
-  expect(await compose()).toContain('C:\\Users\\k/.claude/chat-outlines/chat-1.md')
+  files['C:/Users/k/chat-outlines/chat-1.md'] = CHAT
+  expect(await compose()).toContain('C:\\Users\\k/chat-outlines/chat-1.md')
 
   await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
   const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
@@ -315,18 +315,18 @@ test('the chat outline: where it is saved, its tab, and edits to its own file', 
   expect(await ui.find({ type: 'Text', text: /Add the scanner/ })).toBeDefined()
   // A check-off on the chat tab edits the chat's file, never the project's.
   await ui.press({ key: 'chat:mark:3' })
-  expect(files['C:/Users/k/.claude/chat-outlines/chat-1.md']!.split('\n')[3]).toBe('- ✓ Camera opens')
+  expect(files['C:/Users/k/chat-outlines/chat-1.md']!.split('\n')[3]).toBe('- ✓ Camera opens')
   expect(files['C:/dev/recipes/docs/outline.md']).toBe(FILE)
 
   // Rename and delete on the chat tab edit the chat's file too.
   await ui.press({ key: 'chat:title-edit' })
   await ui.input({ key: 'chat:title', text: 'Scanner work' })
-  expect(files['C:/Users/k/.claude/chat-outlines/chat-1.md']!.split('\n')[0]).toBe('# Scanner work')
+  expect(files['C:/Users/k/chat-outlines/chat-1.md']!.split('\n')[0]).toBe('# Scanner work')
   // Its one job is done now, so the area folded: open it first.
   await ui.press({ key: 'chat:area:2:Scanner' })
   await ui.press({ key: 'chat:del:3' })
   await ui.press({ key: 'chat:yes:3' })
-  expect(files['C:/Users/k/.claude/chat-outlines/chat-1.md']).not.toContain('Camera opens')
+  expect(files['C:/Users/k/chat-outlines/chat-1.md']).not.toContain('Camera opens')
   expect(files['C:/dev/recipes/docs/outline.md']).toBe(FILE)
 
   // A rename box opened on one tab doesn't follow to the other.
